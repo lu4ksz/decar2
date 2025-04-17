@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Sincronização</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #ff7b00;
+            border-bottom: 2px solid #ff7b00;
+            padding-bottom: 5px;
+        }
+        button {
+            background-color: #ff7b00;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #e06d00;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow: auto;
+            max-height: 400px;
+            margin-top: 20px;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-left: 5px solid #ff7b00;
+        }
+    </style>
+</head>
+<body>
+    <h1>Teste de Sincronização do Banco de Dados</h1>
+    
+    <div class="status" id="status">Status: Pronto para testes</div>
+    
+    <div>
+        <button id="testRead">Testar Leitura</button>
+        <button id="testWrite">Testar Escrita</button>
+        <button id="testDelete">Testar Exclusão</button>
+        <button id="clearLog">Limpar Log</button>
+    </div>
+    
+    <h2>Log de Operações</h2>
+    <pre id="log"></pre>
+    
+    <script src="sync.js"></script>
+    <script>
+        // Elementos da página
+        const statusEl = document.getElementById('status');
+        const logEl = document.getElementById('log');
+        
+        // Função para registrar no log
+        function log(message, type = 'info') {
+            const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : '';
+            
+            const entry = document.createElement('div');
+            entry.innerHTML = `<span class="${className}">[${timestamp}] ${message}</span>`;
+            logEl.prepend(entry);
+        }
+        
+        // Função para atualizar o status
+        function updateStatus(message, isError = false) {
+            statusEl.textContent = 'Status: ' + message;
+            statusEl.className = 'status ' + (isError ? 'error' : '');
+        }
+        
+        // Função para testar leitura
+        async function testRead() {
+            updateStatus('Testando leitura...');
+            log('Iniciando teste de leitura');
+            
+            try {
+                const data = await DATA_SYNC.loadData();
+                const submissionsCount = data.submissions ? data.submissions.length : 0;
+                const leadsCount = data.leads ? data.leads.length : 0;
+                
+                log(`Leitura bem-sucedida! Encontrados ${submissionsCount} submissions e ${leadsCount} leads.`, 'success');
+                updateStatus(`Leitura concluída: ${submissionsCount} submissions, ${leadsCount} leads`);
+            } catch (error) {
+                log(`ERRO na leitura: ${error.message}`, 'error');
+                updateStatus('Falha ao ler dados', true);
+            }
+        }
+        
+        // Função para testar escrita
+        async function testWrite() {
+            updateStatus('Testando escrita...');
+            log('Iniciando teste de escrita');
+            
+            try {
+                // Primeiro, ler dados existentes
+                const data = await DATA_SYNC.loadData();
+                const originalSubmissions = data.submissions ? data.submissions.length : 0;
+                const originalLeads = data.leads ? data.leads.length : 0;
+                
+                log(`Dados existentes: ${originalSubmissions} submissions, ${originalLeads} leads`);
+                
+                // Criar novo registro de teste
+                const testId = Date.now();
+                const testSubmission = {
+                    id: testId,
+                    dataSubmissao: new Date().toISOString(),
+                    nome: 'Usuário de Teste',
+                    telefone: '(11) 99999-9999',
+                    cpf: '123.456.789-00',
+                    email: 'teste@exemplo.com',
+                    _testRecord: true // Marcar como registro de teste
+                };
+                
+                const testLead = {
+                    ...testSubmission,
+                    status: 'novo',
+                    ultimaAtualizacao: new Date().toISOString(),
+                    notas: []
+                };
+                
+                log(`Criado registro de teste com ID: ${testId}`);
+                
+                // Salvar o registro de teste
+                const result = await DATA_SYNC.saveSubmission(testSubmission, testLead);
+                
+                if (result) {
+                    log(`Escrita bem-sucedida! Registro de teste salvo com ID: ${testId}`, 'success');
+                    updateStatus('Escrita concluída com sucesso');
+                    
+                    // Verificar se está mesmo nos dados
+                    const newData = await DATA_SYNC.loadData();
+                    const newSubmissions = newData.submissions ? newData.submissions.length : 0;
+                    const newLeads = newData.leads ? newData.leads.length : 0;
+                    
+                    log(`Verificação: ${newSubmissions} submissions (${newSubmissions - originalSubmissions} novo), ${newLeads} leads (${newLeads - originalLeads} novo)`);
+                } else {
+                    log('Falha na escrita. O servidor retornou falso.', 'error');
+                    updateStatus('Falha ao escrever dados', true);
+                }
+            } catch (error) {
+                log(`ERRO na escrita: ${error.message}`, 'error');
+                updateStatus('Falha ao escrever dados', true);
+            }
+        }
+        
+        // Função para testar exclusão
+        async function testDelete() {
+            updateStatus('Testando exclusão...');
+            log('Iniciando teste de exclusão');
+            
+            try {
+                // Procurar por registros de teste
+                const data = await DATA_SYNC.loadData();
+                
+                const testSubmission = data.submissions.find(s => s._testRecord === true);
+                const testLead = data.leads.find(l => l._testRecord === true);
+                
+                if (testSubmission) {
+                    log(`Encontrado registro de teste para exclusão: ID ${testSubmission.id}`);
+                    
+                    // Excluir o registro de teste (submission)
+                    const resultSubmission = await DATA_SYNC.deleteEntry(testSubmission.id, 'submission');
+                    
+                    if (resultSubmission) {
+                        log(`Exclusão da submission bem-sucedida! ID: ${testSubmission.id}`, 'success');
+                    } else {
+                        log(`Falha ao excluir submission com ID: ${testSubmission.id}`, 'error');
+                    }
+                } else {
+                    log('Nenhum registro de teste encontrado para exclusão. Faça um teste de escrita primeiro.', 'error');
+                }
+                
+                if (testLead) {
+                    // Excluir o registro de teste (lead)
+                    const resultLead = await DATA_SYNC.deleteEntry(testLead.id, 'lead');
+                    
+                    if (resultLead) {
+                        log(`Exclusão do lead bem-sucedida! ID: ${testLead.id}`, 'success');
+                    } else {
+                        log(`Falha ao excluir lead com ID: ${testLead.id}`, 'error');
+                    }
+                }
+                
+                updateStatus('Exclusão concluída');
+            } catch (error) {
+                log(`ERRO na exclusão: ${error.message}`, 'error');
+                updateStatus('Falha ao excluir dados', true);
+            }
+        }
+        
+        // Anexar manipuladores de eventos aos botões
+        document.getElementById('testRead').addEventListener('click', testRead);
+        document.getElementById('testWrite').addEventListener('click', testWrite);
+        document.getElementById('testDelete').addEventListener('click', testDelete);
+        document.getElementById('clearLog').addEventListener('click', () => {
+            logEl.innerHTML = '';
+            log('Log limpo');
+        });
+        
+        // Executar teste de leitura no carregamento
+        window.addEventListener('load', testRead);
+    </script>
+</body>
+</html> 

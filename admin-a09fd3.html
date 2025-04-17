@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+            margin: 0;
+        }
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 15px;
+        }
+        h1 {
+            color: #333;
+            margin: 0;
+        }
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .tab-container {
+            margin-bottom: 20px;
+        }
+        .tab-buttons {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab-btn {
+            padding: 10px 20px;
+            background-color: #f1f1f1;
+            border: none;
+            cursor: pointer;
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab-btn.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f1f1f1;
+        }
+        .action-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .save-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <header>
+            <h1>Painel Administrativo - Decar Veículos</h1>
+            <button class="logout-btn" id="logoutBtn">Sair</button>
+        </header>
+        
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-btn active" data-tab="registros">Registros</button>
+                <button class="tab-btn" data-tab="configuracoes">Configurações</button>
+            </div>
+            
+            <div id="registros" class="tab-content active">
+                <h2>Registros de Financiamento</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>CPF</th>
+                            <th>Telefone</th>
+                            <th>Renda</th>
+                            <th>Data</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="registrosTable">
+                        <!-- Sample data -->
+                        <tr>
+                            <td>João Silva</td>
+                            <td>123.456.789-00</td>
+                            <td>(11) 99999-8888</td>
+                            <td>R$ 5.000,00</td>
+                            <td>15/09/2023</td>
+                            <td>
+                                <button class="action-btn view-btn">Ver</button>
+                                <button class="action-btn delete-btn">Excluir</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Maria Oliveira</td>
+                            <td>987.654.321-00</td>
+                            <td>(11) 97777-6666</td>
+                            <td>R$ 4.500,00</td>
+                            <td>14/09/2023</td>
+                            <td>
+                                <button class="action-btn view-btn">Ver</button>
+                                <button class="action-btn delete-btn">Excluir</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="configuracoes" class="tab-content">
+                <h2>Configurações do Formulário</h2>
+                <form id="configForm">
+                    <div class="form-group">
+                        <label for="formTitle">Título do Formulário:</label>
+                        <input type="text" id="formTitle" value="Ficha Cadastral para Financiamento">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="requiredFields">Campos Obrigatórios:</label>
+                        <select id="requiredFields" multiple size="5">
+                            <option value="nome" selected>Nome Completo</option>
+                            <option value="cpf" selected>CPF</option>
+                            <option value="telefone" selected>Telefone</option>
+                            <option value="endereco" selected>Endereço</option>
+                            <option value="renda" selected>Renda</option>
+                            <option value="dataNascimento" selected>Data de Nascimento</option>
+                            <option value="nomeMae" selected>Nome da Mãe</option>
+                            <option value="rg" selected>RG</option>
+                            <option value="email" selected>E-mail</option>
+                        </select>
+                        <p><small>Segure Ctrl para selecionar múltiplos campos</small></p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="emailNotification">E-mail para Notificações:</label>
+                        <input type="email" id="emailNotification" value="contato@decarveiculos.com.br">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="successMessage">Mensagem de Sucesso:</label>
+                        <textarea id="successMessage" rows="3">Cadastro enviado com sucesso! Entraremos em contato em breve.</textarea>
+                    </div>
+                    
+                    <button type="button" class="save-btn" id="saveConfigBtn">Salvar Configurações</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Handle tab switching
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons and content
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked button and corresponding content
+                button.classList.add('active');
+                document.getElementById(button.dataset.tab).classList.add('active');
+            });
+        });
+        
+        // Handle logout
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            window.location.href = 'login.html';
+        });
+        
+        // Handle save configuration
+        document.getElementById('saveConfigBtn').addEventListener('click', function() {
+            alert('Configurações salvas com sucesso!');
+            // Here you would save the configuration to a server
+        });
+        
+        // Security measure: Redirect if directly accessed
+        // This checks if the user came from a valid origin
+        if (!document.referrer.includes('login.html')) {
+            // You could additionally check a session token here
+            // This is a simple security measure, not foolproof
+            const confirmAccess = sessionStorage.getItem('adminAccess');
+            if (!confirmAccess) {
+                window.location.href = 'login.html';
+            }
+        } else {
+            // Set a flag in session storage
+            sessionStorage.setItem('adminAccess', 'true');
+        }
+    </script>
+</body>
+</html> 

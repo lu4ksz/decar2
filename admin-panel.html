@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff7b00;
+            --primary-light: #ff9a3c;
+            --primary-dark: #e06d00;
+            --secondary: #333333;
+            --danger: #dc3545;
+            --success: #28a745;
+            --info: #0d6efd;
+            --light-gray: #f5f5f5;
+            --medium-gray: #e0e0e0;
+            --dark-gray: #666666;
+            --white: #ffffff;
+            --border-radius: 8px;
+            --box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-gray);
+            padding: 20px;
+            margin: 0;
+            color: var(--secondary);
+        }
+        
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 15px;
+        }
+        
+        h1 {
+            color: var(--secondary);
+            font-weight: 700;
+            margin: 0;
+            font-size: 28px;
+        }
+        
+        h2 {
+            color: var(--primary);
+            font-weight: 600;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+        
+        h3 {
+            color: var(--secondary);
+            font-weight: 500;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .logout-btn {
+            background-color: var(--danger);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .logout-btn:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+        }
+        
+        .tab-container {
+            margin-bottom: 20px;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            border-bottom: 1px solid var(--medium-gray);
+            margin-bottom: 20px;
+        }
+        
+        .tab-btn {
+            padding: 12px 25px;
+            background-color: var(--light-gray);
+            border: none;
+            cursor: pointer;
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .tab-btn.active {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid var(--medium-gray);
+            border-radius: 0 var(--border-radius) var(--border-radius) var(--border-radius);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+        
+        th {
+            background-color: var(--light-gray);
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: rgba(255, 123, 0, 0.05);
+        }
+        
+        .action-btn {
+            background-color: var(--info);
+            color: var(--white);
+            border: none;
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            margin-right: 5px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .action-btn:hover {
+            background-color: #0b5ed7;
+            transform: translateY(-2px);
+        }
+        
+        .delete-btn {
+            background-color: var(--danger);
+        }
+        
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            font-size: 15px;
+            transition: var(--transition);
+        }
+        
+        input:focus, 
+        select:focus, 
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 123, 0, 0.2);
+        }
+        
+        .save-btn, .add-btn {
+            background-color: var(--success);
+            color: var(--white);
+            border: none;
+            padding: 12px 25px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: var(--transition);
+        }
+        
+        .save-btn:hover, .add-btn:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+        
+        .add-btn {
+            background-color: var(--info);
+        }
+        
+        .add-btn:hover {
+            background-color: #0b5ed7;
+        }
+        
+        .question-item {
+            padding: 15px;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            background-color: var(--light-gray);
+            transition: var(--transition);
+        }
+        
+        .question-item:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .question-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 15px;
+        }
+        
+        .search-filter {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .search-filter input {
+            width: 70%;
+        }
+        
+        .search-filter button {
+            width: 28%;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--medium-gray);
+            padding-bottom: 15px;
+        }
+        
+        .close-btn {
+            background-color: transparent;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--dark-gray);
+            transition: var(--transition);
+        }
+        
+        .close-btn:hover {
+            color: var(--danger);
+        }
+        
+        .registration-details {
+            margin-bottom: 20px;
+        }
+        
+        .detail-item {
+            display: flex;
+            border-bottom: 1px solid var(--light-gray);
+            padding: 10px 0;
+        }
+        
+        .detail-label {
+            width: 40%;
+            font-weight: 600;
+        }
+        
+        .detail-value {
+            width: 60%;
+        }
+        
+        .field-list {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .collapsible {
+            cursor: pointer;
+            background-color: var(--light-gray);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-top: 15px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        
+        .collapsible:hover {
+            background-color: var(--medium-gray);
+        }
+        
+        .collapsible.active {
+            background-color: var(--primary-light);
+            color: var(--white);
+        }
+        
+        .section-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid var(--medium-gray);
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            margin-bottom: 15px;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .pagination button {
+            margin: 0 5px;
+        }
+        
+        .pagination span {
+            display: flex;
+            align-items: center;
+            margin: 0 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .search-filter {
+                flex-direction: column;
+            }
+            
+            .search-filter input,
+            .search-filter button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            .detail-item {
+                flex-direction: column;
+            }
+            
+            .detail-label,
+            .detail-value {
+                width: 100%;
+            }
+            
+            .detail-value {
+                margin-top: 5px;
+            }
+        }
+    </style>
+    
+    <!-- Add config.js script reference -->
+    <script src="config.js"></script>
+    
+    <!-- Add sync.js script reference -->
+    <script src="sync.js"></script>
+</head>
+<body>
+    <div id="scriptErrorMessage" style="display: none; padding: 20px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px; margin: 20px auto; max-width: 1200px;">
+        <h3 style="color: #721c24; margin-top: 0;">Erro ao carregar dados do servidor</h3>
+        <p>Não foi possível conectar ao servidor. Utilizando dados locais como alternativa.</p>
+    </div>
+    
+    <div class="admin-container">
+        <header>
+            <h1>Painel Administrativo - Decar Veículos</h1>
+            <button class="logout-btn" id="logoutBtn">Sair</button>
+        </header>
+        
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-btn active" data-tab="registros">Registros</button>
+                <button class="tab-btn" data-tab="leads">Leads</button>
+                <button class="tab-btn" data-tab="configuracoes">Configurações do Formulário</button>
+            </div>
+            
+            <div id="registros" class="tab-content active">
+                <h2>Registros de Financiamento</h2>
+                
+                <div class="search-filter">
+                    <input type="text" id="searchRegistros" placeholder="Buscar por nome, CPF ou telefone...">
+                    <button class="action-btn" id="searchBtn">Buscar</button>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>CPF</th>
+                            <th>Telefone</th>
+                            <th>Data</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="registrosTable">
+                        <!-- Os registros serão carregados aqui pelo JavaScript -->
+                    </tbody>
+                </table>
+                
+                <div class="pagination">
+                    <button id="prevPage" class="action-btn" disabled>Anterior</button>
+                    <span id="pageInfo">Página 1 de 1</span>
+                    <button id="nextPage" class="action-btn" disabled>Próxima</button>
+                </div>
+            </div>
+            
+            <div id="leads" class="tab-content">
+                <h2>Gerenciamento de Leads</h2>
+                
+                <div class="search-filter">
+                    <input type="text" id="searchLeads" placeholder="Buscar por nome, CPF ou telefone...">
+                    <button class="action-btn" id="searchLeadsBtn">Buscar</button>
+                </div>
+                
+                <div class="form-group">
+                    <label for="leadStatus">Filtrar por Status:</label>
+                    <select id="leadStatus" style="max-width: 250px; margin-bottom: 20px;">
+                        <option value="all">Todos</option>
+                        <option value="novo">Novos</option>
+                        <option value="contato">Em Contato</option>
+                        <option value="aguardando">Aguardando Resposta</option>
+                        <option value="convertido">Convertidos</option>
+                        <option value="perdido">Perdidos</option>
+                    </select>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Telefone</th>
+                            <th>Data</th>
+                            <th>Status</th>
+                            <th>Última Atualização</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leadsTable">
+                        <!-- Os leads serão carregados aqui pelo JavaScript -->
+                    </tbody>
+                </table>
+                
+                <div class="pagination">
+                    <button id="prevLeadPage" class="action-btn" disabled>Anterior</button>
+                    <span id="leadPageInfo">Página 1 de 1</span>
+                    <button id="nextLeadPage" class="action-btn" disabled>Próxima</button>
+                </div>
+            </div>
+            
+            <div id="configuracoes" class="tab-content">
+                <h2>Configurações do Formulário</h2>
+                
+                <div class="form-group">
+                    <label for="formTitle">Título do Formulário:</label>
+                    <input type="text" id="formTitle" value="Ficha Cadastral para Financiamento">
+                </div>
+                
+                <h3>Seções do Formulário</h3>
+                
+                <div id="formSections">
+                    <div class="collapsible">
+                        <h3>Dados Pessoais</h3>
+                    </div>
+                    <div class="section-content">
+                        <div class="field-list" id="pessoalFields">
+                            <!-- Os campos serão carregados aqui pelo JavaScript -->
+                        </div>
+                        <button class="add-btn" data-section="pessoal">Adicionar Campo</button>
+                    </div>
+                    
+                    <div class="collapsible">
+                        <h3>Dados Profissionais</h3>
+                    </div>
+                    <div class="section-content">
+                        <div class="field-list" id="profissionalFields">
+                            <!-- Os campos serão carregados aqui pelo JavaScript -->
+                        </div>
+                        <button class="add-btn" data-section="profissional">Adicionar Campo</button>
+                    </div>
+                </div>
+                
+                <h3>Botões do Formulário</h3>
+                <div class="form-group">
+                    <label for="submitButtonText">Texto do Botão de Envio:</label>
+                    <input type="text" id="submitButtonText" value="Enviar Cadastro">
+                </div>
+                
+                <div class="form-group">
+                    <label for="successMessage">Mensagem de Sucesso:</label>
+                    <textarea id="successMessage" rows="3">Cadastro enviado com sucesso! Entraremos em contato em breve.</textarea>
+                </div>
+                
+                <button type="button" class="save-btn" id="saveConfigBtn">Salvar Configurações</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de detalhes do registro -->
+    <div id="registroModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Detalhes do Registro</h2>
+                <button class="close-btn" id="closeRegistroModal">&times;</button>
+            </div>
+            <div id="registroDetails" class="registration-details">
+                <!-- Os detalhes serão carregados aqui pelo JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button class="delete-btn" id="deleteRegistroBtn">Excluir Registro</button>
+                <button class="action-btn" id="exportRegistroBtn">Exportar PDF</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de adicionar/editar campo -->
+    <div id="fieldModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="fieldModalTitle">Adicionar Campo</h2>
+                <button class="close-btn" id="closeFieldModal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="fieldLabel">Rótulo do Campo:</label>
+                <input type="text" id="fieldLabel" placeholder="Ex: Nome Completo">
+            </div>
+            <div class="form-group">
+                <label for="fieldType">Tipo do Campo:</label>
+                <select id="fieldType">
+                    <option value="text">Texto</option>
+                    <option value="email">E-mail</option>
+                    <option value="tel">Telefone</option>
+                    <option value="number">Número</option>
+                    <option value="date">Data</option>
+                    <option value="textarea">Área de Texto</option>
+                    <option value="radio">Botões de Opção</option>
+                    <option value="file">Upload de Arquivo</option>
+                </select>
+            </div>
+            <div class="form-group" id="optionsGroup" style="display: none;">
+                <label for="fieldOptions">Opções (uma por linha):</label>
+                <textarea id="fieldOptions" rows="4" placeholder="Opção 1&#10;Opção 2&#10;Opção 3"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="fieldPlaceholder">Texto de Placeholder:</label>
+                <input type="text" id="fieldPlaceholder" placeholder="Ex: Digite seu nome completo">
+            </div>
+            <div class="form-group">
+                <label for="fieldRequired">
+                    <input type="checkbox" id="fieldRequired" style="width: auto;"> Campo Obrigatório
+                </label>
+            </div>
+            <button type="button" class="save-btn" id="saveFieldBtn">Salvar Campo</button>
+        </div>
+    </div>
+
+    <script>
+        // Check if admin access is allowed
+        function checkAdminAccess() {
+            if (!sessionStorage.getItem('adminAccess')) {
+                return false;
+            }
+            return true;
+        }
+        
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            sessionStorage.removeItem('adminAccess');
+            window.location.href = 'login.html';
+        });
+        
+        // Carregar configurações salvas
+        let formConfig = {
+            title: "Ficha Cadastral para Financiamento",
+            submitButtonText: "Enviar Cadastro",
+            sections: {
+                pessoal: {
+                    title: "Dados Pessoais",
+                    fields: [
+                        {
+                            id: "telefone",
+                            label: "Telefone",
+                            type: "tel",
+                            placeholder: "(00) 00000-0000",
+                            required: true
+                        },
+                        {
+                            id: "nome",
+                            label: "Nome Completo",
+                            type: "text",
+                            placeholder: "Digite seu nome completo",
+                            required: true
+                        },
+                        {
+                            id: "dataNascimento",
+                            label: "Data de Nascimento",
+                            type: "date",
+                            required: true
+                        },
+                        {
+                            id: "cpf",
+                            label: "CPF",
+                            type: "text",
+                            placeholder: "000.000.000-00",
+                            required: true
+                        },
+                        {
+                            id: "rg",
+                            label: "RG",
+                            type: "text",
+                            placeholder: "00.000.000-0",
+                            required: true
+                        },
+                        {
+                            id: "nomeMae",
+                            label: "Nome da Mãe",
+                            type: "text",
+                            placeholder: "Nome completo da sua mãe",
+                            required: true
+                        },
+                        {
+                            id: "temCNH",
+                            label: "Tem CNH?",
+                            type: "radio",
+                            options: ["sim", "nao"],
+                            required: true
+                        },
+                        {
+                            id: "email",
+                            label: "E-mail",
+                            type: "email",
+                            placeholder: "seu@email.com",
+                            required: true
+                        },
+                        {
+                            id: "endereco",
+                            label: "Endereço residencial completo com CEP",
+                            type: "textarea",
+                            placeholder: "Rua, número, complemento, bairro, cidade, estado e CEP",
+                            required: true
+                        }
+                    ]
+                },
+                profissional: {
+                    title: "Dados Profissionais",
+                    fields: [
+                        {
+                            id: "profissao",
+                            label: "Qual é a sua profissão?",
+                            type: "text",
+                            placeholder: "Digite sua profissão",
+                            required: true
+                        },
+                        {
+                            id: "empresa",
+                            label: "Trabalhando em qual empresa?",
+                            type: "text",
+                            placeholder: "Nome da empresa",
+                            required: false
+                        },
+                        {
+                            id: "autonomo",
+                            label: "É autônomo em qual ramo?",
+                            type: "text",
+                            placeholder: "Ramo de atividade autônoma",
+                            required: false
+                        },
+                        {
+                            id: "renda",
+                            label: "Valor da sua renda total?",
+                            type: "number",
+                            placeholder: "R$ 0,00",
+                            required: true
+                        }
+                    ]
+                }
+            }
+        };
+        
+        // Carregar registros salvos
+        let formSubmissions = [];
+        let leadsData = [];
+        let usingLocalStorage = false;
+        
+        // Função para mostrar mensagem de erro
+        function showErrorMessage() {
+            document.getElementById('scriptErrorMessage').style.display = 'block';
+        }
+        
+        // Carregar dados do servidor ou localStorage
+        async function loadData() {
+            try {
+                // Tentar carregar dados do arquivo centralizado
+                const data = await DATA_SYNC.loadData();
+                
+                if (data && data.submissions && data.leads) {
+                    formSubmissions = data.submissions;
+                    leadsData = data.leads;
+                    console.log('Dados carregados do arquivo central:', data);
+                } else {
+                    // Usar localStorage como fallback
+                    loadFromLocalStorage();
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados do arquivo:', error);
+                // Usar localStorage como fallback
+                loadFromLocalStorage();
+            }
+            
+            // Iniciar carregamento dos registros
+            filteredSubmissions = [...formSubmissions];
+            filteredLeads = [...leadsData];
+            loadRegistrations(currentPage);
+            loadLeads(currentLeadPage);
+        }
+        
+        // Fallback para carregar do localStorage
+        function loadFromLocalStorage() {
+            usingLocalStorage = true;
+            showErrorMessage();
+            
+            const savedSubmissions = localStorage.getItem('formSubmissions');
+            if (savedSubmissions) {
+                try {
+                    formSubmissions = JSON.parse(savedSubmissions);
+                } catch (e) {
+                    console.error('Erro ao carregar registros salvos:', e);
+                }
+            }
+            
+            const savedLeads = localStorage.getItem('formLeads');
+            if (savedLeads) {
+                try {
+                    leadsData = JSON.parse(savedLeads);
+                } catch (e) {
+                    console.error('Erro ao carregar leads salvos:', e);
+                }
+            } else {
+                // Inicializar com os mesmos dados dos registros como fallback
+                leadsData = formSubmissions.map(submission => ({
+                    ...submission,
+                    status: 'novo',
+                    ultimaAtualizacao: submission.dataSubmissao,
+                    notas: []
+                }));
+                
+                // Salvar leads iniciais
+                localStorage.setItem('formLeads', JSON.stringify(leadsData));
+            }
+        }
+        
+        // Carregar configurações salvas do localStorage
+        const savedConfig = localStorage.getItem('formConfig');
+        if (savedConfig) {
+            try {
+                formConfig = JSON.parse(savedConfig);
+            } catch (e) {
+                console.error('Erro ao carregar configurações salvas:', e);
+            }
+        }
+        
+        // Variáveis de paginação
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let filteredSubmissions = [];
+        
+        // Variáveis de paginação para leads
+        let currentLeadPage = 1;
+        let filteredLeads = [];
+        
+        // Função para formatar data
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) return dateString;
+                
+                return date.toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }).replace(',', ' -');
+            } catch (e) {
+                return dateString;
+            }
+        }
+        
+        // Formatar valores monetários
+        function formatMoney(value) {
+            return parseFloat(value).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+        }
+        
+        // Buscar registros
+        function searchRegistrations(query) {
+            query = query.toLowerCase();
+            filteredSubmissions = formSubmissions.filter(submission => 
+                (submission.nome && submission.nome.toLowerCase().includes(query)) ||
+                (submission.cpf && submission.cpf.includes(query)) ||
+                (submission.telefone && submission.telefone.includes(query))
+            );
+            
+            currentPage = 1;
+            loadRegistrations(currentPage);
+        }
+        
+        // Carregar registros com paginação
+        function loadRegistrations(page) {
+            const startIndex = (page - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageData = filteredSubmissions.slice(startIndex, endIndex);
+            
+            const tableBody = document.getElementById('registrosTable');
+            tableBody.innerHTML = '';
+            
+            if (pageData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Nenhum registro encontrado</td></tr>';
+                return;
+            }
+            
+            pageData.forEach(submission => {
+                const row = document.createElement('tr');
+                const submissionDate = formatDate(submission.dataSubmissao);
+                
+                row.innerHTML = `
+                    <td>${submission.nome || '-'}</td>
+                    <td>${submission.cpf || '-'}</td>
+                    <td>${submission.telefone || '-'}</td>
+                    <td>${submissionDate}</td>
+                    <td>
+                        <button class="action-btn view-btn" data-id="${submission.id}">Ver</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Adicionar eventos para os botões de visualizar
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    showRegistrationDetails(parseInt(this.dataset.id));
+                });
+            });
+            
+            // Atualizar controles de paginação
+            updatePaginationControls();
+        }
+        
+        // Exibir detalhes do registro
+        function showRegistrationDetails(id) {
+            const submission = formSubmissions.find(s => s.id === id);
+            if (!submission) return;
+            
+            const detailsDiv = document.getElementById('registroDetails');
+            detailsDiv.innerHTML = '';
+            
+            // Dados pessoais
+            let detailsHTML = '<h3>Dados Pessoais</h3>';
+            
+            formConfig.sections.pessoal.fields.forEach(field => {
+                let value = submission[field.id] || '-';
+                
+                // Formatação especial para tipos específicos
+                if (field.type === 'date' && value !== '-') {
+                    value = formatDate(value);
+                }
+                
+                detailsHTML += `
+                    <div class="detail-item">
+                        <div class="detail-label">${field.label}</div>
+                        <div class="detail-value">${value}</div>
+                    </div>
+                `;
+            });
+            
+            // Dados profissionais
+            detailsHTML += '<h3>Dados Profissionais</h3>';
+            
+            formConfig.sections.profissional.fields.forEach(field => {
+                let value = submission[field.id] || '-';
+                
+                // Formatação especial para valores monetários
+                if (field.id === 'renda' && value !== '-') {
+                    value = formatMoney(value);
+                }
+                
+                detailsHTML += `
+                    <div class="detail-item">
+                        <div class="detail-label">${field.label}</div>
+                        <div class="detail-value">${value}</div>
+                    </div>
+                `;
+            });
+            
+            detailsDiv.innerHTML = detailsHTML;
+            
+            // Restaurar título do modal
+            document.querySelector('#registroModal .modal-header h2').textContent = 'Detalhes do Registro';
+            
+            // Remover botão adicional se existir
+            const existingUpdateBtn = document.getElementById('updateStatusBtn');
+            if (existingUpdateBtn) {
+                existingUpdateBtn.remove();
+            }
+            
+            // Modificar botão de exclusão
+            document.getElementById('deleteRegistroBtn').dataset.id = id;
+            document.getElementById('deleteRegistroBtn').dataset.type = 'registro';
+            
+            // Exibir o modal
+            document.getElementById('registroModal').style.display = 'flex';
+        }
+        
+        // Deletar registro
+        async function deleteRegistro(id, type = 'registro') {
+            try {
+                let success = false;
+                
+                // Tentar excluir do arquivo centralizado
+                try {
+                    success = await DATA_SYNC.deleteEntry(id, type === 'lead' ? 'lead' : 'submission');
+                } catch (error) {
+                    console.warn('Falha ao excluir do arquivo central:', error);
+                    // Continuará com exclusão local
+                }
+                
+                // Se não foi possível excluir do arquivo ou se falhou, excluir localmente
+                if (!success) {
+                    if (type === 'lead') {
+                        leadsData = leadsData.filter(l => l.id !== id);
+                        filteredLeads = filteredLeads.filter(l => l.id !== id);
+                        localStorage.setItem('formLeads', JSON.stringify(leadsData));
+                    } else {
+                        formSubmissions = formSubmissions.filter(s => s.id !== id);
+                        filteredSubmissions = filteredSubmissions.filter(s => s.id !== id);
+                        localStorage.setItem('formSubmissions', JSON.stringify(formSubmissions));
+                    }
+                } else {
+                    // Recarregar dados após exclusão bem-sucedida
+                    await loadData();
+                }
+                
+                // Recarregar a visualização
+                if (type === 'lead') {
+                    loadLeads(currentLeadPage);
+                } else {
+                    loadRegistrations(currentPage);
+                }
+                
+                // Fechar o modal
+                document.getElementById('registroModal').style.display = 'none';
+                
+            } catch (error) {
+                console.error('Erro ao excluir registro:', error);
+                alert('Ocorreu um erro ao excluir o registro.');
+            }
+        }
+        
+        // Atualizar controles de paginação
+        function updatePaginationControls() {
+            const totalPages = Math.ceil(filteredSubmissions.length / itemsPerPage);
+            document.getElementById('pageInfo').textContent = `Página ${currentPage} de ${totalPages || 1}`;
+            
+            document.getElementById('prevPage').disabled = currentPage <= 1;
+            document.getElementById('nextPage').disabled = currentPage >= totalPages;
+        }
+        
+        // Exportar registro para PDF
+        function exportToPDF(id) {
+            alert('Funcionalidade de exportação para PDF será implementada em uma versão futura.');
+        }
+        
+        // Buscar leads
+        function searchLeads(query) {
+            query = query.toLowerCase();
+            filteredLeads = leadsData.filter(lead => 
+                (lead.nome && lead.nome.toLowerCase().includes(query)) ||
+                (lead.cpf && lead.cpf.includes(query)) ||
+                (lead.telefone && lead.telefone.includes(query))
+            );
+            
+            currentLeadPage = 1;
+            loadLeads(currentLeadPage);
+        }
+        
+        // Filtrar leads por status
+        function filterLeadsByStatus(status) {
+            if (status === 'all') {
+                filteredLeads = [...leadsData];
+            } else {
+                filteredLeads = leadsData.filter(lead => lead.status === status);
+            }
+            
+            currentLeadPage = 1;
+            loadLeads(currentLeadPage);
+        }
+        
+        // Atualizar status do lead
+        async function updateLeadStatus(id, newStatus, note) {
+            try {
+                let success = false;
+                
+                // Tentar atualizar no arquivo centralizado
+                try {
+                    success = await DATA_SYNC.updateLead(id, newStatus, note);
+                } catch (error) {
+                    console.warn('Falha ao atualizar no arquivo central:', error);
+                    // Continuará com atualização local
+                }
+                
+                // Se não foi possível atualizar no arquivo ou se falhou, atualizar localmente
+                if (!success) {
+                    const leadIndex = leadsData.findIndex(l => l.id === id);
+                    if (leadIndex === -1) return;
+                    
+                    // Atualizar o lead
+                    leadsData[leadIndex].status = newStatus;
+                    leadsData[leadIndex].ultimaAtualizacao = new Date().toISOString();
+                    
+                    // Adicionar nota se fornecida
+                    if (note.trim()) {
+                        if (!leadsData[leadIndex].notas) {
+                            leadsData[leadIndex].notas = [];
+                        }
+                        
+                        leadsData[leadIndex].notas.push({
+                            data: new Date().toISOString(),
+                            status: newStatus,
+                            texto: note
+                        });
+                    }
+                    
+                    // Salvar alterações no localStorage
+                    localStorage.setItem('formLeads', JSON.stringify(leadsData));
+                } else {
+                    // Recarregar dados após atualização bem-sucedida
+                    await loadData();
+                }
+                
+                // Recarregar lista de leads
+                loadLeads(currentLeadPage);
+                
+            } catch (error) {
+                console.error('Erro ao atualizar status do lead:', error);
+                alert('Ocorreu um erro ao atualizar o status do lead.');
+            }
+        }
+        
+        // Salvar configuração do formulário
+        function saveFormConfig() {
+            formConfig.title = document.getElementById('formTitle').value;
+            formConfig.submitButtonText = document.getElementById('submitButtonText').value;
+            formConfig.successMessage = document.getElementById('successMessage').value;
+            
+            localStorage.setItem('formConfig', JSON.stringify(formConfig));
+            alert('Configurações salvas com sucesso!');
+        }
+        
+        // Renderizar campos do formulário
+        function renderFormFields() {
+            // Campos de dados pessoais
+            const pessoalFieldsDiv = document.getElementById('pessoalFields');
+            pessoalFieldsDiv.innerHTML = '';
+            
+            formConfig.sections.pessoal.fields.forEach((field, index) => {
+                const fieldDiv = document.createElement('div');
+                fieldDiv.className = 'question-item';
+                
+                let optionsText = '';
+                if (field.options) {
+                    optionsText = `<br><small>Opções: ${field.options.join(', ')}</small>`;
+                }
+                
+                const requiredText = field.required ? ' <span style="color: #e74c3c;">*</span>' : '';
+                
+                fieldDiv.innerHTML = `
+                    <strong>${field.label}${requiredText}</strong>
+                    <br><small>Tipo: ${getFieldTypeName(field.type)}</small>
+                    ${optionsText}
+                    ${field.placeholder ? `<br><small>Placeholder: ${field.placeholder}</small>` : ''}
+                    <div class="question-buttons">
+                        <button class="action-btn edit-field-btn" data-section="pessoal" data-index="${index}">Editar</button>
+                        <button class="action-btn delete-btn delete-field-btn" data-section="pessoal" data-index="${index}">Excluir</button>
+                    </div>
+                `;
+                
+                pessoalFieldsDiv.appendChild(fieldDiv);
+            });
+            
+            // Campos de dados profissionais
+            const profissionalFieldsDiv = document.getElementById('profissionalFields');
+            profissionalFieldsDiv.innerHTML = '';
+            
+            formConfig.sections.profissional.fields.forEach((field, index) => {
+                const fieldDiv = document.createElement('div');
+                fieldDiv.className = 'question-item';
+                
+                let optionsText = '';
+                if (field.options) {
+                    optionsText = `<br><small>Opções: ${field.options.join(', ')}</small>`;
+                }
+                
+                const requiredText = field.required ? ' <span style="color: #e74c3c;">*</span>' : '';
+                
+                fieldDiv.innerHTML = `
+                    <strong>${field.label}${requiredText}</strong>
+                    <br><small>Tipo: ${getFieldTypeName(field.type)}</small>
+                    ${optionsText}
+                    ${field.placeholder ? `<br><small>Placeholder: ${field.placeholder}</small>` : ''}
+                    <div class="question-buttons">
+                        <button class="action-btn edit-field-btn" data-section="profissional" data-index="${index}">Editar</button>
+                        <button class="action-btn delete-btn delete-field-btn" data-section="profissional" data-index="${index}">Excluir</button>
+                    </div>
+                `;
+                
+                profissionalFieldsDiv.appendChild(fieldDiv);
+            });
+            
+            // Adicionar eventos aos botões de editar e excluir campos
+            document.querySelectorAll('.edit-field-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const section = this.dataset.section;
+                    const index = parseInt(this.dataset.index);
+                    editField(section, index);
+                });
+            });
+            
+            document.querySelectorAll('.delete-field-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (confirm('Tem certeza que deseja excluir este campo?')) {
+                        const section = this.dataset.section;
+                        const index = parseInt(this.dataset.index);
+                        deleteField(section, index);
+                    }
+                });
+            });
+        }
+        
+        // Retorna o nome legível do tipo de campo
+        function getFieldTypeName(type) {
+            const typeNames = {
+                'text': 'Texto',
+                'email': 'E-mail',
+                'tel': 'Telefone',
+                'number': 'Número',
+                'date': 'Data',
+                'textarea': 'Área de Texto',
+                'radio': 'Botões de Opção',
+                'checkbox': 'Caixas de Seleção',
+                'file': 'Upload de Arquivo'
+            };
+            return typeNames[type] || type;
+        }
+        
+        // Adicionar campo ao formulário
+        function addField(section) {
+            // Limpar o modal
+            document.getElementById('fieldLabel').value = '';
+            document.getElementById('fieldType').value = 'text';
+            document.getElementById('fieldRequired').checked = false;
+            document.getElementById('fieldOptions').value = '';
+            document.getElementById('fieldPlaceholder').value = '';
+            document.getElementById('optionsGroup').style.display = 'none';
+            
+            // Configurar o título do modal
+            document.getElementById('fieldModalTitle').textContent = 'Adicionar Campo';
+            
+            // Armazenar a seção atual
+            document.getElementById('saveFieldBtn').dataset.section = section;
+            document.getElementById('saveFieldBtn').dataset.mode = 'add';
+            
+            // Exibir o modal
+            document.getElementById('fieldModal').style.display = 'flex';
+        }
+        
+        // Editar campo do formulário
+        function editField(section, index) {
+            const field = formConfig.sections[section].fields[index];
+            
+            // Preencher o modal com os dados do campo
+            document.getElementById('fieldLabel').value = field.label;
+            document.getElementById('fieldType').value = field.type;
+            document.getElementById('fieldRequired').checked = field.required;
+            document.getElementById('fieldPlaceholder').value = field.placeholder || '';
+            
+            if (field.options) {
+                document.getElementById('fieldOptions').value = field.options.join('\n');
+                document.getElementById('optionsGroup').style.display = 'block';
+            } else {
+                document.getElementById('fieldOptions').value = '';
+                document.getElementById('optionsGroup').style.display = 'none';
+            }
+            
+            // Configurar o título do modal
+            document.getElementById('fieldModalTitle').textContent = 'Editar Campo';
+            
+            // Armazenar a seção e o índice atual
+            document.getElementById('saveFieldBtn').dataset.section = section;
+            document.getElementById('saveFieldBtn').dataset.index = index;
+            document.getElementById('saveFieldBtn').dataset.mode = 'edit';
+            
+            // Exibir o modal
+            document.getElementById('fieldModal').style.display = 'flex';
+        }
+        
+        // Excluir campo do formulário
+        function deleteField(section, index) {
+            formConfig.sections[section].fields.splice(index, 1);
+            renderFormFields();
+            saveFormConfig();
+        }
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar permissão de admin antes de carregar dados
+            if (!checkAdminAccess()) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Carregar dados
+            loadData();
+            
+            // Tabs
+            document.querySelectorAll('.tab-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    // Ocultar todos os conteúdos de abas
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Remover classe active de todos os botões
+                    document.querySelectorAll('.tab-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    // Ativar aba clicada
+                    const tabId = this.dataset.tab;
+                    document.getElementById(tabId).classList.add('active');
+                    this.classList.add('active');
+                });
+            });
+            
+            // Botão de busca
+            document.getElementById('searchBtn').addEventListener('click', function() {
+                const query = document.getElementById('searchRegistros').value;
+                searchRegistrations(query);
+            });
+            
+            // Busca por pressionar Enter
+            document.getElementById('searchRegistros').addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    const query = this.value;
+                    searchRegistrations(query);
+                }
+            });
+            
+            // Paginação
+            document.getElementById('prevPage').addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    loadRegistrations(currentPage);
+                }
+            });
+            
+            document.getElementById('nextPage').addEventListener('click', function() {
+                const totalPages = Math.ceil(filteredSubmissions.length / itemsPerPage);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    loadRegistrations(currentPage);
+                }
+            });
+            
+            // Renderizar campos do formulário
+            renderFormFields();
+            
+            // Evento para adicionar campo à seção pessoal
+            document.getElementById('addFieldPessoal').addEventListener('click', function() {
+                addField('pessoal');
+            });
+            
+            // Evento para adicionar campo à seção profissional
+            document.getElementById('addFieldProfissional').addEventListener('click', function() {
+                addField('profissional');
+            });
+            
+            // Evento para salvar configurações
+            document.getElementById('saveConfigBtn').addEventListener('click', saveFormConfig);
+            
+            // Evento para fechar modal
+            document.querySelectorAll('.close-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const modalId = this.closest('.modal').id;
+                    document.getElementById(modalId).style.display = 'none';
+                });
+            });
+            
+            // Evento para excluir registro
+            document.getElementById('deleteRegistroBtn').addEventListener('click', function() {
+                const id = parseInt(this.dataset.id);
+                const type = this.dataset.type || 'registro';
+                
+                if (confirm('Tem certeza que deseja excluir este registro? Esta ação não pode ser desfeita.')) {
+                    deleteRegistro(id, type);
+                }
+            });
+            
+            // Carregar leads
+            loadLeads(currentLeadPage);
+            
+            // Eventos para busca de leads
+            document.getElementById('searchLeadsBtn').addEventListener('click', function() {
+                const query = document.getElementById('searchLeads').value;
+                searchLeads(query);
+            });
+            
+            document.getElementById('searchLeads').addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    const query = this.value;
+                    searchLeads(query);
+                }
+            });
+            
+            // Eventos para filtro de status de leads
+            document.getElementById('leadStatus').addEventListener('change', function() {
+                filterLeadsByStatus(this.value);
+            });
+            
+            // Eventos para paginação de leads
+            document.getElementById('prevLeadPage').addEventListener('click', function() {
+                if (currentLeadPage > 1) {
+                    currentLeadPage--;
+                    loadLeads(currentLeadPage);
+                }
+            });
+            
+            document.getElementById('nextLeadPage').addEventListener('click', function() {
+                const totalPages = Math.ceil(filteredLeads.length / itemsPerPage);
+                if (currentLeadPage < totalPages) {
+                    currentLeadPage++;
+                    loadLeads(currentLeadPage);
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
